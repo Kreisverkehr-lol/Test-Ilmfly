@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback – Ilmfly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0c10;
+            --surface: #12151c;
+            --surface2: #1a1e28;
+            --border: #252a38;
+            --accent: #4f8ef7;
+            --accent2: #7ecfff;
+            --text: #e8eaf0;
+            --text-muted: #6b7390;
+            --success: #3dd68c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            padding: 60px 20px 100px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background atmosphere */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(126,207,255,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            margin-bottom: 48px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent2); }
+        .back-link svg { width: 16px; height: 16px; }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 52px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .header-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .header-sub {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 460px;
+        }
+
+        .divider {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            margin-top: 24px;
+            border-radius: 2px;
+        }
+
+        /* Criteria card */
+        .criteria-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .criteria-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 20px;
+            transition: border-color 0.2s, transform 0.2s;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .criteria-item:hover {
+            border-color: rgba(79,142,247,0.35);
+            transform: translateX(3px);
+        }
+
+        .criteria-item:nth-child(1) { animation-delay: 0.05s; }
+        .criteria-item:nth-child(2) { animation-delay: 0.10s; }
+        .criteria-item:nth-child(3) { animation-delay: 0.15s; }
+        .criteria-item:nth-child(4) { animation-delay: 0.20s; }
+        .criteria-item:nth-child(5) { animation-delay: 0.25s; }
+        .criteria-item:nth-child(6) { animation-delay: 0.30s; }
+        .criteria-item:nth-child(7) { animation-delay: 0.35s; }
+        .criteria-item:nth-child(8) { animation-delay: 0.40s; }
+        .criteria-item:nth-child(9) { animation-delay: 0.45s; }
+        .criteria-item:nth-child(10) { animation-delay: 0.50s; }
+
+        .criteria-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .criteria-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+
+        /* Custom Select */
+        .select-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .custom-select {
+            appearance: none;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 9px 36px 9px 14px;
+            cursor: pointer;
+            outline: none;
+            min-width: 160px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .custom-select:hover,
+        .custom-select:focus {
+            border-color: var(--accent);
+            background: #1f2535;
+        }
+
+        .custom-select option {
+            background: #1a1e28;
+            color: var(--text);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-muted);
+        }
+
+        /* Comment field */
+        .comment-section {
+            margin-bottom: 36px;
+            animation: fadeUp 0.5s 0.55s ease both;
+        }
+
+        .comment-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            padding: 18px 20px;
+            resize: vertical;
+            min-height: 110px;
+            outline: none;
+            transition: border-color 0.2s;
+            line-height: 1.6;
+        }
+
+        textarea::placeholder { color: var(--text-muted); }
+        textarea:focus { border-color: var(--accent); }
+
+        /* Submit button */
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--accent), #3a7de8);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 14px 32px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(79,142,247,0.25);
+            animation: fadeUp 0.5s 0.6s ease both;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(79,142,247,0.35);
+        }
+
+        .submit-btn:active { transform: translateY(0); }
+
+        /* Success toast */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--surface2);
+            border: 1px solid var(--success);
+            color: var(--success);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 14px 28px;
+            border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: all 0.35s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <a href="Ilmfly-Startseite.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Zurück zur Startseite
+    </a>
+
+    <div class="header">
+        <p class="header-label">Ilmfly · Feedback</p>
+        <h1>Ihre Meinung<br>zählt.</h1>
+        <p class="header-sub">Helfen Sie uns, unseren Service kontinuierlich zu verbessern – Ihre Rückmeldung ist uns wichtig.</p>
+        <div class="divider"></div>
+    </div>
+
+<form id="feedback-form" action="https://formspree.io/f/xqeykkpn" method="POST">        <div class="criteria-list">
+
+            <!-- Kriterium 1 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">01</p>
+                    <p class="criteria-label">Gesamtzufriedenheit</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_1">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Sehr zufrieden</option>
+                        <option>Zufrieden</option>
+                        <option>Neutral</option>
+                        <option>Unzufrieden</option>
+                        <option>Sehr unzufrieden</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 2 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">02</p>
+                    <p class="criteria-label">Qualität der Drohnenaufnahmen</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_2">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Ausgezeichnet</option>
+                        <option>Gut</option>
+                        <option>Befriedigend</option>
+                        <option>Mangelhaft</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 3 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">03</p>
+                    <p class="criteria-label">Pünktlichkeit & Zuverlässigkeit</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_3">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Immer pünktlich</option>
+                        <option>Meistens pünktlich</option>
+                        <option>Gelegentlich verzögert</option>
+                        <option>Oft zu spät</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 4 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">04</p>
+                    <p class="criteria-label">Kommunikation & Beratung</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_4">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Sehr gut</option>
+                        <option>Gut</option>
+                        <option>Verbesserungswürdig</option>
+                        <option>Unzureichend</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 5 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">05</p>
+                    <p class="criteria-label">Preis-Leistungs-Verhältnis</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_5">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Sehr fair</option>
+                        <option>Angemessen</option>
+                        <option>Etwas teuer</option>
+                        <option>Zu teuer</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 6 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">06</p>
+                    <p class="criteria-label">Professionalität des Teams</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_6">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Sehr professionell</option>
+                        <option>Professionell</option>
+                        <option>Durchschnittlich</option>
+                        <option>Unprofessionell</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 7 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">07</p>
+                    <p class="criteria-label">Lieferzeit der Ergebnisse</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_7">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Schneller als erwartet</option>
+                        <option>Wie versprochen</option>
+                        <option>Etwas verzögert</option>
+                        <option>Stark verzögert</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 8 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">08</p>
+                    <p class="criteria-label">Sicherheit & Compliance</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_8">
+                        <option value="" disabled selected>Bewertung</option>
+                        <option>Vorbildlich</option>
+                        <option>Gut</option>
+                        <option>Akzeptabel</option>
+                        <option>Bedenken vorhanden</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 9 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">09</p>
+                    <p class="criteria-label">Würden Sie uns weiterempfehlen?</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_9">
+                        <option value="" disabled selected>Auswahl</option>
+                        <option>Auf jeden Fall</option>
+                        <option>Wahrscheinlich</option>
+                        <option>Vielleicht</option>
+                        <option>Eher nicht</option>
+                        <option>Nein</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+            <!-- Kriterium 10 -->
+            <div class="criteria-item">
+                <div>
+                    <p class="criteria-number">10</p>
+                    <p class="criteria-label">Haben Sie alles bekommen, was Sie erwartet haben?</p>
+                </div>
+                <div class="select-wrapper">
+                    <select class="custom-select" name="kriterium_10">
+                        <option value="" disabled selected>Auswahl</option>
+                        <option>Ja, vollständig</option>
+                        <option>Größtenteils</option>
+                        <option>Teilweise</option>
+                        <option>Kaum</option>
+                        <option>Nein</option>
+                    </select>
+                    <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Freitext -->
+        <div class="comment-section">
+            <label class="comment-label">Anmerkungen & Verbesserungsvorschläge</label>
+            <textarea name="kommentar" placeholder="Teilen Sie uns gerne weitere Gedanken mit …"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Feedback absenden
+        </button>
+    </form>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ Vielen Dank für Ihr Feedback!</div>
+
+<script>
+   document.getElementById('feedback-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+
+    // Daten an Formspree senden
+    fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: { 'Accept': 'application/json' }
+    }).then(() => {
+        setTimeout(() => toast.classList.remove('show'), 3500);
+        this.reset();
+    });
+});
+</script>
+
+</body>
+</html>
